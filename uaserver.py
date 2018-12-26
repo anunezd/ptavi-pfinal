@@ -36,11 +36,12 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             mess += '\r\ns=sesionnueva\r\nt=0\r\n'
             mess += 'm=audio ' + tags['rtpaudio_puerto'] + ' RTP\r\n\r\n'
         elif 'ACK' in line:
-            mp32rtp = './mp32rtp -i ' + self.mp32rtp[0] + ' -p ' + self.mp32rtp[1]
-            mp32rtp += ' < ' + tags['audio_path']
-            os.system(mp32rtp)
+            cvlc = 'cvlc rtp://@ ' + self.mp32rtp[0] + ':' + self.mp32rtp[1] + ' & '
+            cvlc += './mp32rtp -i ' + self.mp32rtp[0] + ' -p ' + self.mp32rtp[1]
+            cvlc += ' < ' + tags['audio_path']
+            os.system(cvlc)
             if self.mp32rtp != '':
-                print('ejecutando: ' + mp32rtp)
+                print('ejecutando: ' + cvlc)
                 self.mp32rtp = []
         elif 'BYE' in line:
             mess = 'SIP\2.0 200 OK\r\n\r\n'
