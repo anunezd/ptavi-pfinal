@@ -128,7 +128,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                     expired = tiempo + timedelta(seconds=int(expires))
                     address = str(self.client_address[0]) + ":" + port
                     fecha = expired.strftime(FORMATO)
-                    self.dicc[user] = {'Address ': address, 'Expires': fecha}
+                    self.dicc[user] = {'Address': address, 'Expires': fecha}
                     self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
                     log.sent_to(ip,str(port_src),'SIP/2.0 200 OK')
             else:
