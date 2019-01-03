@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""
-Clase (y programa principal) para un servidor de eco en UDP simple
-"""
+
 
 import sys
 import os
@@ -47,9 +45,9 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                 print('ejecutando: ' + cvlc)
                 self.mp32rtp = []
         elif 'BYE' in line:
-            mess = 'SIP\2.0 200 OK\r\n\r\n'
+            mess = 'SIP/2.0 200 OK\r\n\r\n'
         else:
-            mess = 'SIP\2.0 405 Method Not Allowed\r\n\r\n'
+            mess = 'SIP/2.0 405 Method Not Allowed\r\n\r\n'
         if 'ACK' not in line:
             self.wfile.write(bytes(mess, 'utf-8'))
             log.sent_to(ip, str(port), mess.replace('\r\n', ' '))
@@ -62,7 +60,6 @@ if __name__ == "__main__":
               'regproxy': ['ip', 'puerto'],
               'log': ['path'],
               'audio': ['path']}
-    # Creamos servidor de eco y escuchamos
     if len(sys.argv) != 2:
         sys.exit('Usage: python3 uaserver.py config')
     else:
@@ -77,7 +74,7 @@ if __name__ == "__main__":
     puerto = int(tags['uaserver_puerto'])
     serv = socketserver.UDPServer((ip, puerto), EchoHandler)
 
-    print("Lanzando servidor UDP de eco...\n")
+    print("Comenzando servidor...\n")
     log.starting()
     try:
         serv.serve_forever()
