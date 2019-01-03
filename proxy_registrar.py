@@ -35,7 +35,7 @@ def digest_response(nonce, passwd):
 
 
 class Log_Writer:
-
+    # inicializamos el objeto
     def __init__(self, log_file, date_format):
 
         if not os.path.exists(log_file):
@@ -131,7 +131,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                         pass
                 else:
                     expired = tiempo + timedelta(seconds=int(expires))
-                    address = str(self.client_address[0]) + ":" + port
+                    address = self.client_address[0] + ":" + port
                     fecha = expired.strftime(FORMATO)
                     self.dicc[user] = {'Address': address, 'Expires': fecha}
                     self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
@@ -166,10 +166,10 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 res = self.resent(ip, puerto, line)
                 print(res)
                 if res != '':
-                    print('upsie')
                     self.wfile.write(bytes(res, 'utf-8'))
                     log.sent_to(ip, str(port_src), res.replace('\r\n', ' '))
-                    print('upsie')
+            else:
+                self.wfile.write((b"SIP/2.0 404 User not Found\r\n\r\n"))
         else:
             if not bad_request:
                 # 405 method not allowed
@@ -227,7 +227,7 @@ if __name__ == "__main__":
     puerto = int(tags['server_puerto'])
     serv = socketserver.UDPServer((ip, puerto), SIPRegisterHandler)
     log.starting()
-    print("Lanzando servidor UDP de eco...\n")
+    print("Comenzando servidor...\n")
     try:
         serv.serve_forever()
     except KeyboardInterrupt:
