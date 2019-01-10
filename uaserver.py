@@ -37,7 +37,7 @@ class EchoHandler(socketserver.DatagramRequestHandler):
         elif 'ACK' in line:
             ip = self.mp32rtp[0]
             puerto = self.mp32rtp[1]
-            cvlc = 'cvlc rtp://@ ' + ip + ':' + puerto + ' & '
+            cvlc = 'cvlc rtp://@' + ip + ':' + puerto + ' & '
             cvlc += './mp32rtp -i ' + ip + ' -p ' + puerto
             cvlc += ' < ' + tags['audio_path']
             os.system(cvlc)
