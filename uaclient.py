@@ -142,7 +142,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
                     log.sent_to(pr_ip, pr_port, line.replace('\r\n', ' '))
                     ip = data.split('\r\n')[8].split()[-1]
                     port = data.split('\r\n')[11].split()[1]
-                    cvlc = 'cvlc rtp://@ ' + ip + ':' + port + ' & '
+                    cvlc = 'cvlc rtp://@' + ip + ':' + port + ' & '
                     cvlc += './mp32rtp -i ' + ip + ' -p ' + port
                     cvlc += ' < ' + tags['audio_path']
                     os.system(cvlc)
