@@ -101,7 +101,6 @@ class XMLHandler(ContentHandler):
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
 
     dicc = {}
-    lista = []
     passwd = {}
 
     def handle(self):
@@ -122,13 +121,11 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             tiempo = datetime.now()
             expires = doc[1].split(':')[1]
             if user in self.dicc:
-                if int(expires) == 0:
-                    try:
-                        del self.dicc[user]
-                        self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
-                        log.sent_to(ip, str(port_src), 'SIP/2.0 200 OK')
-                    except KeyError:
-                        pass
+                if 'Digest response' not in line:
+                    line = 'SIP/2.0 401 Unathorized\r\nWWW Authenticate: '
+                    line += 'Digest nonce="' + digest_nonce(user) + '"\r\n\r\n'
+                    self.wfile.write(bytes(line, 'utf-8'))
+                    log.sent_to(ip, str(port_src), line.replace('\r\n', ' '))
                 else:
                     expired = tiempo + timedelta(seconds=int(expires))
                     address = self.client_address[0] + ":" + port
@@ -181,7 +178,17 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 self.wfile.write(b"SIP/2.0 400 Bad Request\r\n\r\n")
                 log.sent_to(ip, str(port_src), 'SIP/2.0 400 Bad Request')
 
+        self.expires_users()
         self.register2json()
+
+    def expires_users(self):
+        deleted = []
+        now = (datetime.now()).strftime(FORMATO)
+        for user in self.dicc:
+            if now >= self.dicc[user]['Expires']:
+                deleted.append(user)
+        for user in deleted:
+            del self.dicc[user]
 
     def resent(self, ip, puerto, line):
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
